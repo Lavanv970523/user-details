@@ -20,7 +20,12 @@ import com.example.userdetails.entities.Role;
 import com.example.userdetails.entities.User;
 import com.example.userdetails.service.UserService;
 
+import lombok.Data;
+import lombok.extern.log4j.Log4j2;
+
+
 @RestController
+@Log4j2
 public class UserController {
 
 	@Autowired
@@ -28,6 +33,7 @@ public class UserController {
 
 	@GetMapping("users")
 	public List<User> getUsers() {
+
 		return userService.getUsers();
 	}
 

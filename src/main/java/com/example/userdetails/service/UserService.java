@@ -33,10 +33,8 @@ public class UserService {
 	public List<User> getUsers() {
 		try {
 
-			System.out.println("Service::Entered");
 			return userDao.getUsers();
 		} catch (Exception e) {
-			// TODO: handle exception
 			throw new DelegationException(e.getMessage());
 		}
 	}
@@ -44,7 +42,6 @@ public class UserService {
 	public void addUser(UserDto userDto) {
 		try {
 
-			System.out.println(10/0);
 			User user= mapper.map(userDto, User.class);
 			user.setCreatedOn(new Date());
 			Role role = new Role();

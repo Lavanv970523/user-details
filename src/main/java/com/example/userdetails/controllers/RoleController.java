@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.userdetails.dto.RoleDto;
 import com.example.userdetails.entities.Role;
 import com.example.userdetails.service.RoleService;
 
@@ -24,12 +25,12 @@ public class RoleController {
 	}
 
 	@PostMapping("roles")
-	public void addRole(@RequestBody Role role) {
-		roleService.addRole(role);
+	public void addRole(@RequestBody RoleDto roleDto) {
+		roleService.addRole(roleDto);
 	}
 
 	@PutMapping("roles")
-	public void updateRole(@RequestBody Role role) {
-		roleService.updateRole(role);
+	public void updateRole(@RequestBody RoleDto roleDto) {
+		roleService.updateRole(roleDto);
 	}
 }

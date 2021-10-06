@@ -8,4 +8,6 @@ public class CompositeKey implements Serializable{
 	private Integer userId;
 	private Integer roleId;
 	
+	
+	
 }
