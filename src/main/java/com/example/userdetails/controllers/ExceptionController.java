@@ -1,8 +1,8 @@
 package com.example.userdetails.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +21,16 @@ public class ExceptionController{
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(value=MethodArgumentNotValidException.class)
-	public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-		Map<String, String> errors = new HashMap<>();
+	public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+		List<ErrorModel> l = new ArrayList<>();
 		ex.getBindingResult().getAllErrors().forEach((error) -> {
-			String fieldName = ((FieldError) error).getField();
-			String errorMessage = error.getDefaultMessage();
-			errors.put(fieldName, errorMessage);
+			ErrorModel em = new ErrorModel();
+			em.setTimestamp(new Date());
+			em.setMessage(error.getDefaultMessage());
+			em.setDetails(((FieldError) error).getField());
+			l.add(em);
 		});
-		return errors;
+		return new ResponseEntity<>(l, HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	@ExceptionHandler(value = DaoException.class)
