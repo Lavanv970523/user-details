@@ -27,7 +27,7 @@ public class UserService {
 	private UserDaoInterface userDao;
 
 	@Autowired
-	private ModelMapper mapper;
+	private ModelMapper mapper; 
 
 	public List<User> getUsers() {
 		log.info("Entered into UserService :: getUsers");
