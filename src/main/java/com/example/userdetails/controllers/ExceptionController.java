@@ -23,7 +23,7 @@ public class ExceptionController{
 	@ExceptionHandler(value=MethodArgumentNotValidException.class)
 	public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
 		List<ErrorModel> l = new ArrayList<>();
-		ex.getBindingResult().getAllErrors().forEach((error) -> {
+		ex.getBindingResult().getAllErrors().forEach(error -> {
 			ErrorModel em = new ErrorModel();
 			em.setTimestamp(new Date());
 			em.setMessage(error.getDefaultMessage());

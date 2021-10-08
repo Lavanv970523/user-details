@@ -13,9 +13,9 @@ public interface UserDaoInterface {
 
 	public List<User> getUsers();
 
-	public void addUser(@RequestBody User user);
+	public User addUser(@RequestBody User user);
 
-	public void updateUser(User user);
+	public User updateUser(User user);
 
 	public User getUser(Integer id);
 

@@ -29,7 +29,7 @@ public class UserDao implements UserDaoInterface {
 	@Override
 	public List<User> getUsers() {
 		
-		try {
+		try { 
 			log.info("Entered into UserDao :: getUsers");
 			List<User> users = new ArrayList<>();
 			userRepository.findAll().forEach(users::add);
@@ -42,10 +42,10 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
-	public void addUser(User user) {
-		try {
+	public User addUser(User user) {
+		try { 
 			log.info("Entered into UserDao :: addUser");
-			userRepository.save(user);
+			return userRepository.save(user);
 
 		} catch (Exception e) {
 			log.error("Error while adding user details", e);
@@ -54,10 +54,10 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
-	public void updateUser(User user) {
+	public User updateUser(User user) {
 		try {
 			log.info("Entered into UserDao :: updateUser");
-			userRepository.save(user);
+			return userRepository.save(user);
 
 		} catch (Exception e) {
 			log.error("Error while updating user details", e);

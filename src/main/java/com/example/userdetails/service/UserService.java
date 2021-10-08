@@ -26,7 +26,7 @@ public class UserService {
 	@Autowired
 	private UserDaoInterface userDao;
 
-	@Autowired
+	@Autowired 
 	private ModelMapper mapper; 
 
 	public List<User> getUsers() {
@@ -39,19 +39,20 @@ public class UserService {
 		}
 	}
 
-	public void addUser(UserDto userDto) {
+	public User addUser(UserDto userDto) {
 		try {
 			log.info("Entered into UserService :: addUser");
 			User user= mapper.map(userDto, User.class);
 			log.debug("Mapped dto to user object");
 			user.setCreatedOn(new Date());
 			Role role = new Role();
-			role.setRoleId(6);
+			role.setRoleId(6); 
 			List<Role> list = new ArrayList<>();
 			list.add(role);
 			user.setRoles(list);
 			log.debug("Default role assigned to User");
-			userDao.addUser(user);
+			return userDao.addUser(user);
+			
 
 		} catch (Exception e) {
 			log.error("Error while adding user details", e);
@@ -59,12 +60,12 @@ public class UserService {
 		}
 	}
 
-	public void updateUser(UserDto userDto) {
+	public User updateUser(UserDto userDto) {
 		try {
 			log.info("Entered into UserService :: updateUser");
 			User user=mapper.map(userDto, User.class);
 			user.setModifiedOn(new Date());
-			userDao.updateUser(user);
+			return userDao.updateUser(user);
 		} catch (Exception e) {
 			log.error("Error while updating user details", e);
 			throw new DelegationException(e.getMessage());

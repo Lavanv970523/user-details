@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.userdetails.dto.RoleDto;
 import com.example.userdetails.entities.Role;
+import com.example.userdetails.exceptions.DaoException;
 import com.example.userdetails.exceptions.DelegationException;
 import com.example.userdetails.idao.RoleDaoInterface;
 
@@ -25,31 +26,31 @@ public class RoleService {
 		try {
 			return roleDao.getRoles();
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 		
 		
 	}
 
-	public void addRole(RoleDto roleDto) {
+	public Role addRole(RoleDto roleDto) {
 		try {
 			Role role= mapper.map(roleDto, Role.class);
 			role.setCreatedOn(new Date());
-			roleDao.addRole(role);
+			return roleDao.addRole(role);
 			
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 	}
 
-	public void updateRole(RoleDto roleDto) {
+	public Role updateRole(RoleDto roleDto) {
 		try {
 			Role role= mapper.map(roleDto, Role.class);
 			role.setModifiedOn(new Date());
-			roleDao.updateRole(role);
+			return roleDao.updateRole(role);
 			
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 	}
 

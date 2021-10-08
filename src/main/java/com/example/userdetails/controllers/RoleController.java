@@ -3,6 +3,8 @@ package com.example.userdetails.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,12 +27,14 @@ public class RoleController {
 	}
 
 	@PostMapping("roles")
-	public void addRole(@RequestBody RoleDto roleDto) {
-		roleService.addRole(roleDto);
+	public ResponseEntity<Role> addRole(@RequestBody RoleDto roleDto) {
+		Role role=roleService.addRole(roleDto);
+		return new ResponseEntity<Role>(role, HttpStatus.CREATED);
 	}
 
 	@PutMapping("roles")
-	public void updateRole(@RequestBody RoleDto roleDto) {
-		roleService.updateRole(roleDto);
+	public ResponseEntity<Role> updateRole(@RequestBody RoleDto roleDto) {
+		Role role= roleService.updateRole(roleDto);
+		return new ResponseEntity<>(role, HttpStatus.NO_CONTENT);
 	}
 }

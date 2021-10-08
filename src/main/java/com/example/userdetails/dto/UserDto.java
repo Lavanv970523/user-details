@@ -11,7 +11,15 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
 
@@ -29,7 +37,7 @@ public class UserDto {
 	private String lastName;
 
 	@Past(message = "The Birth date should be past date")
-	private Date DOB;
+	private Date dob;
 
 	private String address;
 
@@ -96,11 +104,11 @@ public class UserDto {
 	}
 
 	public Date getDOB() {
-		return DOB;
+		return dob;
 	}
 
 	public void setDOB(Date dOB) {
-		DOB = dOB;
+		dob = dOB;
 	}
 
 	public String getAddress() {

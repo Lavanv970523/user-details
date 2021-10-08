@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.example.userdetails.entities.Role;
+import com.example.userdetails.exceptions.DaoException;
 import com.example.userdetails.exceptions.DelegationException;
 import com.example.userdetails.idao.RoleDaoInterface;
 import com.example.userdetails.repositories.RoleRepository;
@@ -22,27 +23,27 @@ public class RoleDao implements RoleDaoInterface{
 			return (List<Role>) roleRepository.findAll();
 			
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void addRole(Role role) {
+	public Role addRole(Role role) {
 		try {
-			roleRepository.save(role);
+			return roleRepository.save(role);
 			
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 	}
 
 	@Override
-	public void updateRole(Role role) {
+	public Role updateRole(Role role) {
 		try {
-			roleRepository.save(role);
+			return roleRepository.save(role);
 			
 		} catch (Exception e) {
-			throw new DelegationException(e.getMessage());
+			throw new DaoException(e.getMessage());
 		}
 	}
 	

@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,26 +36,28 @@ public class UserController {
 	public List<User> getUsers() {
 		log.info("Entered into UserController :: getUsers");
 		return userService.getUsers();
-	}
+	} 
 
 	@PostMapping(value = "users") 
-	@ResponseStatus(code = HttpStatus.CREATED)
-	public void addUser(@Valid @RequestBody UserDto userDto) {
+	public ResponseEntity<User> addUser(@Valid @RequestBody UserDto userDto) {
 		log.info("Entered into UserController :: addUser");
-		userService.addUser(userDto);
+		User user=userService.addUser(userDto);
+		return new ResponseEntity<>(user, HttpStatus.CREATED);
+		
 	}
 
 	@PutMapping("users")
-	@ResponseStatus(code = HttpStatus.NO_CONTENT)
-	public void updateUser(@RequestBody UserDto userDto) {
+	public ResponseEntity<User> updateUser(@RequestBody UserDto userDto) {
 		log.info("Entered into UserController :: updateUser");
-		userService.updateUser(userDto);
+		User user=userService.updateUser(userDto);
+		return new ResponseEntity<>(user, HttpStatus.NO_CONTENT);
 	}
 
 	@GetMapping("users/{id}")
-	public User getUser(@PathVariable Integer id) {
+	public ResponseEntity<User> getUser(@PathVariable Integer id) {
 		log.info("Entered into UserController :: getUser");
-		return userService.getUser(id);
+		User user= userService.getUser(id);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 
 	@DeleteMapping("users/{id}")

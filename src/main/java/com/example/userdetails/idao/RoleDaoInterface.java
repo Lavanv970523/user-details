@@ -8,8 +8,8 @@ public interface RoleDaoInterface {
 
 	List<Role> getRoles();
 
-	void addRole(Role role);
+	Role addRole(Role role);
 
-	void updateRole(Role role);
+	Role updateRole(Role role);
 
 }

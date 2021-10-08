@@ -1,31 +1,37 @@
 package com.example.userdetails.service;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.example.userdetails.controllers.UserController;
 import com.example.userdetails.dao.UserDao;
 import com.example.userdetails.dto.UserDto;
+import com.example.userdetails.entities.Role;
 import com.example.userdetails.entities.User;
+import com.example.userdetails.exceptions.DelegationException;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
 	@Autowired
@@ -35,78 +41,24 @@ class UserServiceTest {
 	UserService userService;
 
 	@Mock
-	UserDao userDao = new UserDao();
-	
-
-	@BeforeEach
-	void set() {
-		ReflectionTestUtils.setField(userService, "userDao", userDao);
-	}
-
-	List<User> list = new ArrayList<User>();
-	User u1 = new User();
-
-	User u2 = new User();
-	
-	UserDto userDto = new UserDto();
+	UserDao userDao;
 
 	@Test
 	void testGetUsers() {
 
-		u1.setFirstName("ravi");
-		u1.setLastName("last");
-		u1.setAddress("laksm");
-		u1.setEmail("test@test.com");
-		u1.setPassword("1524");
-		u1.setPhoneNumber("9876543212");
+		when(userDao.getUsers()).thenReturn(
+				Stream.of(new User(null, "Ravi", "Ravi", "1234", "Ravi", null, null, null, null, null, null, null))
+						.collect(Collectors.toList()));
 
-		u2.setFirstName("ravi");
-		u2.setLastName("last");
-		u2.setAddress("laksm");
-		u2.setEmail("test@test.com");
-		u2.setPassword("1524");
-		u2.setPhoneNumber("9876543211");
-
-		list.add(u1);
-		list.add(u2);
-
-		when(userDao.getUsers()).thenReturn(list);
-
-		List<User> userList = userService.getUsers();
-
-		assertEquals(2, userList.size());
+		assertEquals(1, userService.getUsers().size());
 		verify(userDao, times(1)).getUsers();
 	}
-	
-//	@Test
-//	void testAddUser() {
-//		ReflectionTestUtils.setField(userService, "mapper", modelMapper);
-//		ReflectionTestUtils.setField(userService, "user", user);
-//
-//		userDto.setFirstName("ravi");
-//		userDto.setLastName("last");
-//		userDto.setAddress("laksm");
-//		userDto.setEmail("test@test.com");
-//		userDto.setPassword("1524");
-//		userDto.setPhoneNumber("9876543212");
-//
-//		userService.addUser(userDto);
-//
-//		verify(userDao, times(1)).addUser(user);
-//	}
-	
+
 	@Test
 	void testGetUser() {
 
-		u1.setFirstName("ravi");
-		u1.setId(1);
-		u1.setLastName("last");
-		u1.setAddress("laksm");
-		u1.setEmail("test@test.com");
-		u1.setPassword("1524");
-		u1.setPhoneNumber("9876543212");
-
-		when(userDao.getUser(1)).thenReturn(u1);
+		when(userDao.getUser(1)).thenReturn(
+				(new User(1, "ravi", "1234", "ravi", "last", null, null, "test@test.com", null, null, null, null)));
 		User user = userService.getUser(1);
 		assertEquals(1, user.getId());
 		assertEquals("ravi", user.getFirstName());
@@ -115,4 +67,156 @@ class UserServiceTest {
 		verify(userDao, times(1)).getUser(1);
 	}
 
+	@Test
+	void testAddUser() {
+
+		ReflectionTestUtils.setField(userService, "mapper", modelMapper);
+
+		UserDto userDto = new UserDto();
+		userDto.setId(1);
+		userDto.setFirstName("ravi");
+		userDto.setLastName("last");
+		userDto.setAddress("laksm");
+		userDto.setEmail("test@test.com");
+		userDto.setPassword("1524");
+		userDto.setPhoneNumber("9876543212");
+
+		when(userDao.addUser(any())).then(i -> i.getArgument(0));
+		User user = userService.addUser(userDto);
+		assertEquals(1, user.getId());
+		assertEquals("test@test.com", user.getEmail());
+		verify(userDao, times(1)).addUser(user);
+
+	}
+
+	@Test
+	void testUpdateUser() {
+
+		ReflectionTestUtils.setField(userService, "mapper", modelMapper);
+
+		UserDto userDto = new UserDto();
+		userDto.setId(1);
+		userDto.setFirstName("ravi");
+		userDto.setLastName("last");
+		userDto.setAddress("laksm");
+		userDto.setEmail("test@test.com");
+		userDto.setPassword("1524");
+		userDto.setPhoneNumber("9876543212");
+
+		when(userDao.updateUser(any())).then(i -> i.getArgument(0));
+		User user = userService.updateUser(userDto);
+		assertEquals(1, user.getId());
+		assertNotNull(user);
+		assertEquals("test@test.com", user.getEmail());
+		verify(userDao, times(1)).updateUser(user);
+
+	}
+
+	@Test
+	void testDeleteUser() {
+
+		userService.deleteUser(1);
+		verify(userDao).deleteUser(any());
+
+	}
+
+	@Test
+	void testGetUserRoles() {
+
+		when(userDao.getRolesOfUser(1)).thenReturn(
+				Stream.of(new Role(1, "admin", "desc", null, null, null), new Role(2, "dev", "desc", null, null, null))
+						.collect(Collectors.toList()));
+		List<Role> roles = userService.getRolesOfUser(1);
+		assertEquals(1, roles.get(0).getRoleId());
+		assertEquals(2, roles.get(1).getRoleId());
+		verify(userDao, times(1)).getRolesOfUser(1);
+	}
+
+	@Test
+	void testAssignUserRoles() {
+
+		userService.assignRoles(1, 1);
+		verify(userDao).assignRoles(any());
+
+	}
+
+	@Test
+	void testRemoveUserRoles() {
+
+		userService.removeRoles(1, 1);
+		verify(userDao).removeRoles(any());
+
+	}
+
+	@Test
+	void testAddUserNegative() {
+
+		UserDto userDto = new UserDto();
+		userDto.setId(1);
+		userDto.setFirstName("ravi");
+		userDto.setLastName("last");
+		userDto.setAddress("laksm");
+		userDto.setEmail("test@test.com");
+		userDto.setPassword("1524");
+		userDto.setPhoneNumber("9876543212");
+
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.addUser(userDto));
+
+	}
+	
+	@Test
+	void testGetUsersNegative() {
+
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.getUsers());
+
+	}
+	
+	@Test
+	void testUpdateUserNegative() {
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.updateUser(null));
+
+	}
+	
+	@Test
+	void testGetUserNegative() {
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.getUser(null));
+
+	}
+	
+	@Test
+	void testDeleteUserNegative() {
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.deleteUser(1));
+
+	}
+	
+	@Test
+	void testGetRolesOfUserNegative() {
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.getRolesOfUser(1));
+
+	}
+	
+	@Test
+	void testAssignRolesNegative() {
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.assignRoles(1,1));
+
+	}
+	
+	@Test
+	void testRemoveRolesNegative() {
+		UserDao dao = null;
+		ReflectionTestUtils.setField(userService, "userDao", dao);
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.removeRoles(1,1));
+
+	}
+	
 }
