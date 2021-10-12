@@ -12,15 +12,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -39,19 +39,18 @@ class UserServiceTest {
 
 	@InjectMocks
 	UserService userService;
-
+	
+	
 	@Mock
 	UserDao userDao;
 
 	@Test
 	void testGetUsers() {
+		Page<User> users = Mockito.mock(Page.class);
+		when(userDao.getUsers(any())).thenReturn(users);
 
-		when(userDao.getUsers()).thenReturn(
-				Stream.of(new User(null, "Ravi", "Ravi", "1234", "Ravi", null, null, null, null, null, null, null))
-						.collect(Collectors.toList()));
-
-		assertEquals(1, userService.getUsers().size());
-		verify(userDao, times(1)).getUsers();
+		assertEquals(4, userService.getUsers(1,1).size());
+		verify(userDao, times(1)).getUsers(any());
 	}
 
 	@Test
@@ -169,7 +168,7 @@ class UserServiceTest {
 
 		UserDao dao = null;
 		ReflectionTestUtils.setField(userService, "userDao", dao);
-		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.getUsers());
+		assertThatExceptionOfType(DelegationException.class).isThrownBy(() -> userService.getUsers(1,1));
 
 	}
 	

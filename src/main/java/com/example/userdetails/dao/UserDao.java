@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.example.userdetails.entities.Role;
@@ -11,6 +13,7 @@ import com.example.userdetails.entities.User;
 import com.example.userdetails.entities.UserRoles;
 import com.example.userdetails.exceptions.DaoException;
 import com.example.userdetails.idao.UserDaoInterface;
+import com.example.userdetails.repositories.UserPagingRepository;
 import com.example.userdetails.repositories.UserRepository;
 import com.example.userdetails.repositories.UserRolesRepository;
 
@@ -25,15 +28,17 @@ public class UserDao implements UserDaoInterface {
 
 	@Autowired
 	private UserRolesRepository userRolesRepository;
+	
+	@Autowired
+	private UserPagingRepository userPagingRepository;
 
 	@Override
-	public List<User> getUsers() {
+	public Page<User> getUsers(Pageable paging) {
 		
 		try { 
 			log.info("Entered into UserDao :: getUsers");
-			List<User> users = new ArrayList<>();
-			userRepository.findAll().forEach(users::add);
-			return users;
+			
+			return userPagingRepository.findAll(paging);
 
 		} catch (Exception e) {
 			log.error("Error while fetching user details", e);
@@ -45,7 +50,10 @@ public class UserDao implements UserDaoInterface {
 	public User addUser(User user) {
 		try { 
 			log.info("Entered into UserDao :: addUser");
-			return userRepository.save(user);
+			User user1 = userRepository.save(user);
+//			log.error(10/0);
+			userRepository.deleteById(120);
+			return user1;
 
 		} catch (Exception e) {
 			log.error("Error while adding user details", e);

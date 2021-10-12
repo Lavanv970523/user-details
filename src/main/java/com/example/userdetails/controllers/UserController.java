@@ -1,10 +1,10 @@
 package com.example.userdetails.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.userdetails.dto.UserDto;
 import com.example.userdetails.entities.Role;
 import com.example.userdetails.entities.User;
+import com.example.userdetails.repositories.UserPagingRepository;
 import com.example.userdetails.service.UserService;
 
 import lombok.extern.log4j.Log4j2;
@@ -31,11 +32,16 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserPagingRepository userPagingRepository;
 
 	@GetMapping("users")
-	public List<User> getUsers() {
+	public ResponseEntity<Map<String, Object>> getUsers(@RequestParam(defaultValue = "0") Integer pageNo, 
+            @RequestParam(defaultValue = "10") Integer pageSize) {
 		log.info("Entered into UserController :: getUsers");
-		return userService.getUsers();
+		
+		return new ResponseEntity<>(userService.getUsers(pageNo, pageSize), HttpStatus.OK);
 	} 
 
 	@PostMapping(value = "users") 
@@ -61,7 +67,6 @@ public class UserController {
 	}
 
 	@DeleteMapping("users/{id}")
-	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	public void deleteUser(@PathVariable Integer id) {
 		log.info("Entered into UserController :: deleteUser");
 		userService.deleteUser(id);

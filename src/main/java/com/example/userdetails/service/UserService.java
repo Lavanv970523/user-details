@@ -2,11 +2,17 @@ package com.example.userdetails.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import com.example.userdetails.dto.UserDto;
@@ -26,33 +32,40 @@ public class UserService {
 	@Autowired
 	private UserDaoInterface userDao;
 
-	@Autowired 
-	private ModelMapper mapper; 
+	@Autowired
+	private ModelMapper mapper;
 
-	public List<User> getUsers() {
+	public Map<String, Object> getUsers(Integer pageNo, Integer pageSize) {
 		log.info("Entered into UserService :: getUsers");
 		try {
-			return userDao.getUsers();
+			Pageable paging = PageRequest.of(pageNo, pageSize);
+			Page<User> pageResult = userDao.getUsers(paging);
+			Map<String, Object> result = new HashMap<>();
+			result.put("users", pageResult.getContent());
+			result.put("totalPages", pageResult.getTotalPages());
+			result.put("currentPage", pageResult.getNumber());
+			result.put("totalUsers", pageResult.getTotalElements());
+			return result;
 		} catch (Exception e) {
 			log.error("Error while fetching user details", e);
 			throw new DelegationException(e.getMessage());
 		}
 	}
 
+	@Transactional
 	public User addUser(UserDto userDto) {
 		try {
 			log.info("Entered into UserService :: addUser");
-			User user= mapper.map(userDto, User.class);
+			User user = mapper.map(userDto, User.class);
 			log.debug("Mapped dto to user object");
 			user.setCreatedOn(new Date());
 			Role role = new Role();
-			role.setRoleId(6); 
+			role.setRoleId(6);
 			List<Role> list = new ArrayList<>();
 			list.add(role);
 			user.setRoles(list);
 			log.debug("Default role assigned to User");
 			return userDao.addUser(user);
-			
 
 		} catch (Exception e) {
 			log.error("Error while adding user details", e);
@@ -60,10 +73,11 @@ public class UserService {
 		}
 	}
 
+	@Transactional
 	public User updateUser(UserDto userDto) {
 		try {
 			log.info("Entered into UserService :: updateUser");
-			User user=mapper.map(userDto, User.class);
+			User user = mapper.map(userDto, User.class);
 			user.setModifiedOn(new Date());
 			return userDao.updateUser(user);
 		} catch (Exception e) {
@@ -82,6 +96,7 @@ public class UserService {
 		}
 	}
 
+	@Transactional
 	public void deleteUser(Integer id) {
 		try {
 			log.info("Entered into UserService :: deleteUser");
@@ -116,6 +131,7 @@ public class UserService {
 		}
 	}
 
+	@Transactional
 	public void removeRoles(Integer userId, Integer roleId) {
 		try {
 			log.info("Entered into UserService :: removeRoles");
