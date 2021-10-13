@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.example.userdetails.dto.RoleDto;
 import com.example.userdetails.entities.Role;
 import com.example.userdetails.exceptions.DaoException;
-import com.example.userdetails.exceptions.DelegationException;
 import com.example.userdetails.idao.RoleDaoInterface;
 
 @Service

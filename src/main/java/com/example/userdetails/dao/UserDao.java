@@ -1,9 +1,11 @@
 package com.example.userdetails.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -47,13 +49,11 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
+	@CachePut(value = "user", key = "#user.id")
 	public User addUser(User user) {
 		try { 
 			log.info("Entered into UserDao :: addUser");
-			User user1 = userRepository.save(user);
-//			log.error(10/0);
-			userRepository.deleteById(120);
-			return user1;
+			return userRepository.save(user);
 
 		} catch (Exception e) {
 			log.error("Error while adding user details", e);
@@ -62,6 +62,7 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
+	@CachePut(value = "user", key = "#user.id")
 	public User updateUser(User user) {
 		try {
 			log.info("Entered into UserDao :: updateUser");
@@ -74,6 +75,7 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
+	@Cacheable(value = "user", key = "#id")
 	public User getUser(Integer id) {
 		try {
 			log.info("Entered into UserDao :: getUser");
@@ -86,6 +88,7 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
+	@CacheEvict(value = "user", key = "#user.id")
 	public void deleteUser(Integer id) {
 		try {
 			log.info("Entered into UserDao :: deleteUser");
@@ -98,6 +101,7 @@ public class UserDao implements UserDaoInterface {
 	}
 
 	@Override
+	@Cacheable(value = "role", key = "#id")
 	public List<Role> getRolesOfUser(Integer id) {
 		try {
 			log.info("Entered into UserDao :: getRolesOfUser");

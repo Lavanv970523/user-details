@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.userdetails.dto.UserDto;
 import com.example.userdetails.entities.Role;
 import com.example.userdetails.entities.User;
-import com.example.userdetails.repositories.UserPagingRepository;
 import com.example.userdetails.service.UserService;
 
 import lombok.extern.log4j.Log4j2;
@@ -32,9 +31,6 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private UserPagingRepository userPagingRepository;
 
 	@GetMapping("users")
 	public ResponseEntity<Map<String, Object>> getUsers(@RequestParam(defaultValue = "0") Integer pageNo, 

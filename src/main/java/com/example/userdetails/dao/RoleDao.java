@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.userdetails.entities.Role;
 import com.example.userdetails.exceptions.DaoException;
-import com.example.userdetails.exceptions.DelegationException;
 import com.example.userdetails.idao.RoleDaoInterface;
 import com.example.userdetails.repositories.RoleRepository;
 

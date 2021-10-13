@@ -1,6 +1,7 @@
 package com.example.userdetails.entities;
 
 import java.util.Date;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "role_id")
