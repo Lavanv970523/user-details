@@ -78,7 +78,7 @@ class UserServiceTest {
 		userDto.setAddress("laksm");
 		userDto.setEmail("test@test.com");
 		userDto.setPassword("1524");
-		userDto.setPhoneNumber("9876543212");
+		userDto.setPhoneNumber("9876543212"); 
 
 		when(userDao.addUser(any())).then(i -> i.getArgument(0));
 		User user = userService.addUser(userDto);

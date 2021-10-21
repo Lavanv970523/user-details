@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class UserController {
 
 	@Autowired
-	private UserService userService;
+	private UserService userService; 
 
 	@GetMapping("users")
 	public ResponseEntity<Map<String, Object>> getUsers(@RequestParam(defaultValue = "0") Integer pageNo, 
