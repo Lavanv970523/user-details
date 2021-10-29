@@ -2,18 +2,30 @@ package com.example.userdetails.service;
 
 import java.util.ArrayList;
 
-import org.springframework.security.core.userdetails.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.userdetails.entities.User;
+import com.example.userdetails.repositories.UserRepository;
+
 @Service
 public class MyUserDetails implements UserDetailsService {
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-		return new User("foo", "foo", new ArrayList<>());
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+		
+		User user= userRepository.findByUserName(userName);
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found with username: " + userName);
+		}
+		
+		return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(), new ArrayList<>());
 	}
 
 }
